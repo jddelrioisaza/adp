@@ -26,9 +26,18 @@ class Automata:
 
         }
 
+        self.edgeColors = {
+
+            ('p', 'p'): 'b',
+            ('p', 'q'): 'b',
+            ('q', 'q'): 'b',
+            ('q', 'r'): 'b'
+
+        }
+
         self.__grafo = nx.DiGraph()
         self.__grafo.add_nodes_from({'p', 'q', 'r'})
-        self.__grafo.add_weighted_edges_from(self.__generarAristas())
+        self.__grafo.add_edges_from(self.__generarAristas())
 
         plt.rcParams['toolbar'] = 'None'
 
@@ -68,65 +77,65 @@ class Automata:
 
     # TRANSICIONES CON A
 
-    def __a_b_ba(self):
+    def __a_b_ba(self, velocidad):
 
         self.pila.desapilar()
         self.pila.apilar('b')
         self.pila.apilar('a')
 
-        self.__actualizarAristas('p', 'p')
+        self.__actualizarAristas('p', 'p', velocidad)
 
         self.__activarEstadoP()
 
-    def __a_a_aa(self):
+    def __a_a_aa(self, velocidad):
 
         self.pila.desapilar()
         self.pila.apilar('a')
         self.pila.apilar('a')
 
-        self.__actualizarAristas('p', 'p')
+        self.__actualizarAristas('p', 'p', velocidad)
 
         self.__activarEstadoP()
 
-    def __a_z_za(self):
+    def __a_z_za(self, velocidad):
 
         self.pila.desapilar()
         self.pila.apilar('Z')
         self.pila.apilar('a')
 
-        self.__actualizarAristas('p', 'p')
+        self.__actualizarAristas('p', 'p', velocidad)
 
         self.__activarEstadoP()
 
     # TRANSICIONES CON B
 
-    def __b_b_bb(self):
+    def __b_b_bb(self, velocidad):
 
         self.pila.desapilar()
         self.pila.apilar('b')
         self.pila.apilar('b')
 
-        self.__actualizarAristas('p', 'p')
+        self.__actualizarAristas('p', 'p', velocidad)
 
         self.__activarEstadoP()
 
-    def __b_a_ab(self):
+    def __b_a_ab(self, velocidad):
 
         self.pila.desapilar()
         self.pila.apilar('a')
         self.pila.apilar('b')
 
-        self.__actualizarAristas('p', 'p')
+        self.__actualizarAristas('p', 'p', velocidad)
 
         self.__activarEstadoP()
 
-    def __b_z_zb(self):
+    def __b_z_zb(self, velocidad):
 
         self.pila.desapilar()
         self.pila.apilar('Z')
         self.pila.apilar('b')
 
-        self.__actualizarAristas('p', 'p')
+        self.__actualizarAristas('p', 'p', velocidad)
 
         self.__activarEstadoP()
 
@@ -146,12 +155,12 @@ class Automata:
 
     # TRANSICIONES QUE LLEVAN A R
 
-    def __n_z_z(self):
+    def __n_z_z(self, velocidad):
 
         self.pila.desapilar()
         self.pila.apilar('Z')
 
-        self.__actualizarAristas('q', 'r')
+        self.__actualizarAristas('q', 'r', velocidad)
 
         self.__activarEstadoR()
 
@@ -159,7 +168,7 @@ class Automata:
 
     def __iniciarGrafo(self, velocidad):
 
-        nx.draw(self.__grafo, self.posVertices, with_labels = True, node_color = "red")
+        nx.draw(self.__grafo, self.posVertices, with_labels = True, node_color = "red", node_size = 500)
         nx.draw_networkx_edges(self.__grafo, self.posVertices)
         plt.pause(1 / velocidad)
 
@@ -167,17 +176,20 @@ class Automata:
 
         if (estado != 'r'):
 
-            nx.draw(self.__grafo, self.posVertices, with_labels = True, node_color = ['blue' if node == estado else 'red' for node in self.__grafo.nodes()])
+            nx.draw(self.__grafo, self.posVertices, with_labels = True, node_color = ['blue' if node == estado else 'red' for node in self.__grafo.nodes()], node_size = 500)
             plt.pause(1 / velocidad)
+            self.__iniciarGrafo(velocidad)
 
         else:
 
-            nx.draw(self.__grafo, self.posVertices, with_labels = True, node_color = ['blue' if node == estado else 'red' for node in self.__grafo.nodes()])
+            nx.draw(self.__grafo, self.posVertices, with_labels = True, node_color = ['blue' if node == estado else 'red' for node in self.__grafo.nodes()], node_size = 500)
             plt.pause(1 / velocidad)
+            self.__iniciarGrafo(velocidad)
 
-    def __actualizarAristas(self, estadoInicial, estadoFinal):
+    def __actualizarAristas(self, estadoInicial, estadoFinal, velocidad):
 
-        pass
+        nx.draw_networkx_edges(self.__grafo, self.posVertices, edge_color = ['blue' if edge == (estadoInicial, estadoFinal) else 'black' for edge in self.__grafo.edges()])
+        plt.pause(1 / velocidad)
 
     def procesar(self, palabra, velocidad):
 
@@ -202,24 +214,25 @@ class Automata:
                     if self.pila.tope() == 'b':
 
                         self.__actualizarNodos('p', velocidad)
-                        self.__a_b_ba()
+                        self.__a_b_ba(velocidad)
 
                     elif self.pila.tope() == 'a':
 
                         if (i < (longitud / 2) + 1):
 
                             self.__actualizarNodos('p', velocidad)
-                            self.__a_a_aa()
+                            self.__a_a_aa(velocidad)
 
                         elif (i == (longitud / 2) + 1):
 
                             self.__actualizarNodos('p', velocidad)
                             self.__a_a_n()
+                            self.__actualizarAristas('p', 'q', velocidad)
 
                     elif self.pila.tope() == 'Z':
 
                         self.__actualizarNodos('p', velocidad)
-                        self.__a_z_za()
+                        self.__a_z_za(velocidad)
 
                 elif caracter == 'b':
 
@@ -228,22 +241,23 @@ class Automata:
                         if (i < (longitud / 2) + 1):
 
                             self.__actualizarNodos('p', velocidad)
-                            self.__b_b_bb()
+                            self.__b_b_bb(velocidad)
 
                         elif (i == (longitud / 2) + 1):
 
                             self.__actualizarNodos('p', velocidad)
                             self.__b_b_n()
+                            self.__actualizarAristas('p', 'q', velocidad)
 
                     elif self.pila.tope() == 'a':
 
                         self.__actualizarNodos('p', velocidad)
-                        self.__b_a_ab()
+                        self.__b_a_ab(velocidad)
 
                     elif self.pila.tope() == 'Z':
 
                         self.__actualizarNodos('p', velocidad)
-                        self.__b_z_zb()
+                        self.__b_z_zb(velocidad)
 
             elif self.__getEstadoQ():
 
@@ -253,6 +267,7 @@ class Automata:
 
                         self.__actualizarNodos('q', velocidad)
                         self.__b_b_n()
+                        self.__actualizarAristas('q', 'q', velocidad)
 
                     else:
 
@@ -264,6 +279,7 @@ class Automata:
 
                         self.__actualizarNodos('q', velocidad)
                         self.__a_a_n()
+                        self.__actualizarAristas('q', 'q', velocidad)
 
                     else:
 
@@ -274,7 +290,7 @@ class Automata:
                     if self.pila.tope() == 'Z' and self.__getEstadoQ():
 
                         self.__actualizarNodos('q', velocidad)
-                        self.__n_z_z()
+                        self.__n_z_z(velocidad)
                         self.__actualizarNodos('r', velocidad)
 
             i = i + 1
@@ -299,10 +315,10 @@ class Automata:
 
         aristas = set()
 
-        aristas.add(('p', 'p', 'a'))
-        aristas.add(('p', 'q', 'b'))
-        aristas.add(('q', 'q', 'c'))
-        aristas.add(('q', 'r', 'd'))
+        aristas.add(('p', 'p'))
+        aristas.add(('p', 'q'))
+        aristas.add(('q', 'q'))
+        aristas.add(('q', 'r'))
 
         return aristas
 
