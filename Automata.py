@@ -1,8 +1,13 @@
+import os
+
 from Pila import Pila
 
+from gtts import gTTS
+from playsound import playsound
+
 import networkx as nx
-import matplotlib as matp
 import matplotlib.pyplot as plt
+
 
 class Automata:
 
@@ -24,6 +29,8 @@ class Automata:
         self.__grafo = nx.DiGraph()
         self.__grafo.add_nodes_from({'p', 'q', 'r'})
         self.__grafo.add_weighted_edges_from(self.__generarAristas())
+
+        plt.rcParams['toolbar'] = 'None'
 
     def __getEstadoP(self):
 
@@ -54,6 +61,10 @@ class Automata:
         self.estados[0] = False
         self.estados[1] = False
         self.estados[2] = True
+
+    def __reiniciarEstados(self):
+
+        self.estados = [True, False, False]
 
     # TRANSICIONES CON A
 
@@ -146,37 +157,37 @@ class Automata:
 
     # VALIDAR
 
-    def __iniciarGrafo(self):
+    def __iniciarGrafo(self, velocidad):
 
         nx.draw(self.__grafo, self.posVertices, with_labels = True, node_color = "red")
         nx.draw_networkx_edges(self.__grafo, self.posVertices)
-        plt.pause(1)
+        plt.pause(1 / velocidad)
 
-    def __actualizarNodos(self, estado):
+    def __actualizarNodos(self, estado, velocidad):
 
         if (estado != 'r'):
 
             nx.draw(self.__grafo, self.posVertices, with_labels = True, node_color = ['blue' if node == estado else 'red' for node in self.__grafo.nodes()])
-            plt.pause(1)
+            plt.pause(1 / velocidad)
 
         else:
 
             nx.draw(self.__grafo, self.posVertices, with_labels = True, node_color = ['blue' if node == estado else 'red' for node in self.__grafo.nodes()])
-            plt.pause(5)
+            plt.pause(1 / velocidad)
 
     def __actualizarAristas(self, estadoInicial, estadoFinal):
 
         pass
 
-    def procesar(self, palabra):
+    def procesar(self, palabra, velocidad):
 
-        self.__iniciarGrafo()
+        plt.close()
+
+        self.__iniciarGrafo(velocidad)
 
         longitud = len(palabra)
         i = 1
         palabra = palabra + ' '
-        estado = ''
-        tope = ''
 
         for caracter in palabra:
 
@@ -190,33 +201,25 @@ class Automata:
 
                     if self.pila.tope() == 'b':
 
-                        self.__actualizarNodos('p')
+                        self.__actualizarNodos('p', velocidad)
                         self.__a_b_ba()
-                        estado = 'a/b/ba'
-                        tope = self.pila.getPila()
 
                     elif self.pila.tope() == 'a':
 
                         if (i < (longitud / 2) + 1):
 
-                            self.__actualizarNodos('p')
+                            self.__actualizarNodos('p', velocidad)
                             self.__a_a_aa()
-                            estado = 'a/a/aa'
-                            tope = self.pila.getPila()
 
                         elif (i == (longitud / 2) + 1):
 
-                            self.__actualizarNodos('p')
+                            self.__actualizarNodos('p', velocidad)
                             self.__a_a_n()
-                            estado = 'a/a/n'
-                            tope = self.pila.getPila()
 
                     elif self.pila.tope() == 'Z':
 
-                        self.__actualizarNodos('p')
+                        self.__actualizarNodos('p', velocidad)
                         self.__a_z_za()
-                        estado = 'a/z/za'
-                        tope = self.pila.getPila()
 
                 elif caracter == 'b':
 
@@ -224,31 +227,23 @@ class Automata:
 
                         if (i < (longitud / 2) + 1):
 
-                            self.__actualizarNodos('p')
+                            self.__actualizarNodos('p', velocidad)
                             self.__b_b_bb()
-                            estado = 'b/b/bb'
-                            tope = self.pila.getPila()
 
                         elif (i == (longitud / 2) + 1):
 
-                            self.__actualizarNodos('p')
+                            self.__actualizarNodos('p', velocidad)
                             self.__b_b_n()
-                            estado = 'b/b/n'
-                            tope = self.pila.getPila()
 
                     elif self.pila.tope() == 'a':
 
-                        self.__actualizarNodos('p')
+                        self.__actualizarNodos('p', velocidad)
                         self.__b_a_ab()
-                        estado = 'b/a/ab'
-                        tope = self.pila.getPila()
 
                     elif self.pila.tope() == 'Z':
 
-                        self.__actualizarNodos('p')
+                        self.__actualizarNodos('p', velocidad)
                         self.__b_z_zb()
-                        estado = 'b/z/zb'
-                        tope = self.pila.getPila()
 
             elif self.__getEstadoQ():
 
@@ -256,10 +251,8 @@ class Automata:
 
                     if self.pila.tope() == 'b':
 
-                        self.__actualizarNodos('q')
+                        self.__actualizarNodos('q', velocidad)
                         self.__b_b_n()
-                        estado = 'b/b/n'
-                        tope = self.pila.getPila()
 
                     else:
 
@@ -269,10 +262,8 @@ class Automata:
 
                     if self.pila.tope() == 'a':
 
-                        self.__actualizarNodos('q')
+                        self.__actualizarNodos('q', velocidad)
                         self.__a_a_n()
-                        estado = 'a/a/n'
-                        tope = self.pila.getPila()
 
                     else:
 
@@ -282,24 +273,26 @@ class Automata:
 
                     if self.pila.tope() == 'Z' and self.__getEstadoQ():
 
-                        self.__actualizarNodos('q')
+                        self.__actualizarNodos('q', velocidad)
                         self.__n_z_z()
-                        estado = 'n/z/z'
-                        tope = self.pila.getPila()
-                        self.__actualizarNodos('r')
+                        self.__actualizarNodos('r', velocidad)
 
             i = i + 1
-            print(estado)
-            print(tope)
 
-            self.__iniciarGrafo()
+            self.__iniciarGrafo(velocidad)
+
+        plt.close()
 
         if self.__getEstadoR():
 
+            self.__reiniciarEstados()
+            self.__procesarVoz("LA CADENA FUE ACEPTADA POR EL AUTÓMATA.")
             return True
 
         else:
 
+            self.__reiniciarEstados()
+            self.__procesarVoz("LA CADENA NO FUE ACEPTADA POR EL AUTÓMATA.")
             return False
 
     def __generarAristas(self):
@@ -312,3 +305,12 @@ class Automata:
         aristas.add(('q', 'r', 'd'))
 
         return aristas
+
+    def __procesarVoz(self, texto):
+
+        objeto = gTTS(text = texto, lang= "es", slow = False)
+        objeto.save("mensaje.mp3")
+
+        playsound("mensaje.mp3", block = True)
+
+        os.remove("mensaje.mp3")
