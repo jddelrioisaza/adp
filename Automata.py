@@ -321,12 +321,3 @@ class Automata:
         aristas.add(('q', 'r'))
 
         return aristas
-
-    def __procesarVoz(self, texto):
-
-        objeto = gTTS(text = texto, lang= "es", slow = False)
-        objeto.save("mensaje.mp3")
-
-        playsound("mensaje.mp3", block = True)
-
-        os.remove("mensaje.mp3")
