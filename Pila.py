@@ -5,6 +5,9 @@ class Pila:
         self.pila = []
         self.pila.append('Z')
 
+    def __iter__(self):
+        return iter(self.pila)
+
     def getPila(self):
 
         return self.pila

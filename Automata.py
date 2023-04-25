@@ -2,11 +2,15 @@ from Pila import Pila
 
 import networkx as nx
 import matplotlib.pyplot as plt
+from GraficoPila import PygameVisualizer
 
 
 class Automata:
 
     def __init__(self):
+
+        #PARA EL GRAFICO DE LA PILA
+        self.grafico = PygameVisualizer(300, 500)
 
         self.pila = Pila()
         self.resultado = []
@@ -80,6 +84,9 @@ class Automata:
 
         self.__actualizarAristas('p', 'p', velocidad)
 
+        # DIBUJAR LA PILA
+        self.grafico.draw(self.pila)
+
         self.__activarEstadoP()
 
     def __a_a_aa(self, velocidad):
@@ -90,6 +97,9 @@ class Automata:
 
         self.__actualizarAristas('p', 'p', velocidad)
 
+        # DIBUJAR LA PILA
+        self.grafico.draw(self.pila)
+
         self.__activarEstadoP()
 
     def __a_z_za(self, velocidad):
@@ -99,6 +109,9 @@ class Automata:
         self.pila.apilar('a')
 
         self.__actualizarAristas('p', 'p', velocidad)
+
+        # DIBUJAR LA PILA
+        self.grafico.draw(self.pila)
 
         self.__activarEstadoP()
 
@@ -112,6 +125,9 @@ class Automata:
 
         self.__actualizarAristas('p', 'p', velocidad)
 
+        # DIBUJAR LA PILA
+        self.grafico.draw(self.pila)
+
         self.__activarEstadoP()
 
     def __b_a_ab(self, velocidad):
@@ -121,6 +137,9 @@ class Automata:
         self.pila.apilar('b')
 
         self.__actualizarAristas('p', 'p', velocidad)
+
+        # DIBUJAR LA PILA
+        self.grafico.draw(self.pila)
 
         self.__activarEstadoP()
 
@@ -132,6 +151,9 @@ class Automata:
 
         self.__actualizarAristas('p', 'p', velocidad)
 
+        # DIBUJAR LA PILA
+        self.grafico.draw(self.pila)
+
         self.__activarEstadoP()
 
     # TRANSICIONES QUE LLEVAN A Q
@@ -142,11 +164,17 @@ class Automata:
 
         self.__activarEstadoQ()
 
+        # DIBUJAR LA PILA
+        self.grafico.draw(self.pila)
+
     def __a_a_n(self):
 
         self.pila.desapilar()
 
         self.__activarEstadoQ()
+
+        # DIBUJAR LA PILA
+        self.grafico.draw(self.pila)
 
     # TRANSICIONES QUE LLEVAN A R
 
@@ -156,6 +184,9 @@ class Automata:
         self.pila.apilar('Z')
 
         self.__actualizarAristas('q', 'r', velocidad)
+
+        # DIBUJAR LA PILA
+        self.grafico.draw(self.pila)
 
         self.__activarEstadoR()
 
@@ -191,6 +222,7 @@ class Automata:
         plt.close()
 
         self.__iniciarGrafo(velocidad)
+        self.grafico.clear()
 
         longitud = len(palabra)
         i = 1
