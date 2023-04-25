@@ -10,7 +10,12 @@ from playsound import playsound
 
 from Automata import Automata
 
-directorio_actual = os.path.dirname(os.path.abspath(__file__))
+import matplotlib as matp
+import matplotlib.backends.backend_qt5agg
+
+matp.use('Qt5Agg')
+
+directorio_actual = os.getcwd()
 localedir = os.path.join(directorio_actual, 'locale')
 
 gettext.bindtextdomain('myapp', localedir)
