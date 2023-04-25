@@ -1,9 +1,4 @@
-import os
-
 from Pila import Pila
-
-from gtts import gTTS
-from playsound import playsound
 
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -302,13 +297,11 @@ class Automata:
         if self.__getEstadoR():
 
             self.__reiniciarEstados()
-            #self.__procesarVoz("LA CADENA FUE ACEPTADA POR EL AUTÓMATA.")
             return True
 
         else:
 
             self.__reiniciarEstados()
-            #self.__procesarVoz("LA CADENA NO FUE ACEPTADA POR EL AUTÓMATA.")
             return False
 
     def __generarAristas(self):

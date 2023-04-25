@@ -1,14 +1,16 @@
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
+
 import os
 import gettext
+
 from gtts import gTTS
 from playsound import playsound
 
 from Automata import Automata
 
-directorio_actual = os.getcwd()
+directorio_actual = os.path.dirname(os.path.abspath(__file__))
 localedir = os.path.join(directorio_actual, 'locale')
 
 gettext.bindtextdomain('myapp', localedir)
@@ -17,6 +19,8 @@ gettext.textdomain('myapp')
 class AutomataGUI(QMainWindow):
 
     def __init__(self):
+
+        print(localedir)
 
         super().__init__()
 
@@ -36,7 +40,7 @@ class AutomataGUI(QMainWindow):
 
     def __crearInterfaz(self, idioma = 'es'):
 
-        translations = gettext.translation(domain='mensajes', localedir=localedir, languages=[idioma])
+        translations = gettext.translation(domain = 'mensajes', localedir = localedir, languages = [idioma])
         translations.install()
         _ = translations.gettext
 
@@ -50,6 +54,7 @@ class AutomataGUI(QMainWindow):
 
         # ACTUALIZAR EL MENU DE IDIOMAS
         if self.idiomas_menu:
+
             self.__actualizarTextoIdiomasMenu()
 
         # BARRA DE MENU PARA CAMBIAR IDIOMA
@@ -128,14 +133,17 @@ class AutomataGUI(QMainWindow):
     def __cambiarIdioma(self, idioma):
 
         if idioma == 'en':
+
             self.ingles_action.setChecked(True)
             locale = 'en'
 
         elif idioma == 'fr':
+
             self.frances_action.setChecked(True)
             locale = 'fr'
 
         else:
+
             self.espanol_action.setChecked(True)
             locale = 'es'
 
@@ -145,7 +153,7 @@ class AutomataGUI(QMainWindow):
         self.__crearInterfaz(locale)
 
     def __obtenerIdioma(self):
-            
+
         if self.ingles_action.isChecked():
 
             return 'en'
@@ -159,6 +167,7 @@ class AutomataGUI(QMainWindow):
             return 'es'
 
     def traduccion(self, mensaje):
+
         idioma = self.__obtenerIdioma()
         translations = gettext.translation(domain='mensajes', localedir=localedir, languages=[idioma])
         translations.install()
@@ -167,6 +176,7 @@ class AutomataGUI(QMainWindow):
         return _(mensaje)
 
     def __actualizarTextoIdiomasMenu(self):
+
         self.ingles_action.setText(self.traduccion("Inglés"))
         self.espanol_action.setText(self.traduccion("Español"))
         self.frances_action.setText(self.traduccion("Francés"))
