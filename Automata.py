@@ -2,8 +2,8 @@ from Pila import Pila
 
 import networkx as nx
 import matplotlib.pyplot as plt
-from GraficoPila import PygameVisualizer
 
+from GraficoPila import PygameVisualizer
 
 class Automata:
 
