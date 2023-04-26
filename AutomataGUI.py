@@ -157,8 +157,8 @@ class AutomataGUI(QMainWindow):
             self.espanol_action.setChecked(True)
             locale = 'es'
 
-        gettext.install('mensajes', localedir, names=("ngettext",))
-        gettext.translation('mensajes', localedir, languages=[locale]).install()
+        gettext.install('mensajes', localedir, names = ("ngettext",))
+        gettext.translation('mensajes', localedir, languages = [locale]).install()
 
         self.__crearInterfaz(locale)
 
@@ -179,7 +179,7 @@ class AutomataGUI(QMainWindow):
     def traduccion(self, mensaje):
 
         idioma = self.__obtenerIdioma()
-        translations = gettext.translation(domain='mensajes', localedir=localedir, languages=[idioma])
+        translations = gettext.translation(domain='mensajes', localedir = localedir, languages = [idioma])
         translations.install()
         _ = translations.gettext
 
