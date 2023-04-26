@@ -118,6 +118,11 @@ class AutomataGUI(QMainWindow):
         btn_procesar.clicked.connect(self.__procesar)
         layout.addWidget(btn_procesar)
 
+        # PARA MOSTRAR EL HISTORIAL
+        self.list_widget = QListWidget()
+        layout.addWidget(self.list_widget)
+        btn_procesar.clicked.connect(lambda: self.__historial(self.__linee_cadena.text()))
+
     def __procesar(self):
 
         if self.__automata.procesar(self.__linee_cadena.text(), self.__deslizador.value()):
@@ -190,3 +195,6 @@ class AutomataGUI(QMainWindow):
         playsound("mensaje.mp3", block = False)
 
         os.remove("mensaje.mp3")
+
+    def __historial(self, palabra):
+        self.list_widget.addItem(palabra)
